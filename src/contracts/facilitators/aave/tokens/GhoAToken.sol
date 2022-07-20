@@ -37,13 +37,14 @@ contract GhoAToken is VersionedInitializable, IncentivizedERC20, IGhoAToken {
   address public immutable RESERVE_TREASURY_ADDRESS;
   ILendingPool public immutable POOL;
 
+  GhoVariableDebtToken internal immutable GHO_VARIABLE_DEBT_TOKEN;
+
   /// @dev owner => next valid nonce to submit with permit()
   mapping(address => uint256) public _nonces;
 
   bytes32 public DOMAIN_SEPARATOR;
 
   // NEW Gho STORAGE
-  GhoVariableDebtToken internal _ghoVariableDebtToken;
   address internal _ghoTreasury;
 
   modifier onlyLendingPool() {
@@ -62,6 +63,7 @@ contract GhoAToken is VersionedInitializable, IncentivizedERC20, IGhoAToken {
 
   constructor(
     ILendingPool pool,
+    GhoVariableDebtToken ghoVariableDebtToken,
     address underlyingAssetAddress,
     address reserveTreasuryAddress,
     string memory tokenName,
@@ -69,6 +71,7 @@ contract GhoAToken is VersionedInitializable, IncentivizedERC20, IGhoAToken {
     address incentivesController
   ) IncentivizedERC20(tokenName, tokenSymbol, 18, incentivesController) {
     POOL = pool;
+    GHO_VARIABLE_DEBT_TOKEN = ghoVariableDebtToken;
     UNDERLYING_ASSET_ADDRESS = underlyingAssetAddress;
     RESERVE_TREASURY_ADDRESS = reserveTreasuryAddress;
   }
@@ -260,7 +263,7 @@ contract GhoAToken is VersionedInitializable, IncentivizedERC20, IGhoAToken {
    * @param amount The amount getting repaid
    **/
   function handleRepayment(address user, uint256 amount) external override onlyLendingPool {
-    uint256 balanceFromInterest = _ghoVariableDebtToken.getBalanceFromInterest(user);
+    uint256 balanceFromInterest = GHO_VARIABLE_DEBT_TOKEN.getBalanceFromInterest(user);
     if (amount <= balanceFromInterest) {
       _repayInterest(user, amount);
     } else {
@@ -341,19 +344,8 @@ contract GhoAToken is VersionedInitializable, IncentivizedERC20, IGhoAToken {
   }
 
   /// @inheritdoc IGhoAToken
-  function setVariableDebtToken(address ghoVariableDebtAddress)
-    external
-    override
-    onlyLendingPoolAdmin
-  {
-    require(address(_ghoVariableDebtToken) == address(0), 'VARIABLE_DEBT_TOKEN_ALREADY_SET');
-    _ghoVariableDebtToken = GhoVariableDebtToken(ghoVariableDebtAddress);
-    emit VariableDebtTokenSet(ghoVariableDebtAddress);
-  }
-
-  /// @inheritdoc IGhoAToken
   function getVariableDebtToken() external view override returns (address) {
-    return address(_ghoVariableDebtToken);
+    return address(GHO_VARIABLE_DEBT_TOKEN);
   }
 
   /// @inheritdoc IGhoAToken
@@ -384,6 +376,6 @@ contract GhoAToken is VersionedInitializable, IncentivizedERC20, IGhoAToken {
 
   function _repayInterest(address user, uint256 amount) internal {
     IERC20(UNDERLYING_ASSET_ADDRESS).transfer(_ghoTreasury, amount);
-    _ghoVariableDebtToken.decreaseBalanceFromInterest(user, amount);
+    GHO_VARIABLE_DEBT_TOKEN.decreaseBalanceFromInterest(user, amount);
   }
 }

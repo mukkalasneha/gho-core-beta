@@ -28,7 +28,7 @@ contract GhoVariableDebtToken is GhoDebtTokenBase, IGhoVariableDebtToken {
   uint256 public constant DEBT_TOKEN_REVISION = 0x2;
 
   // Corresponding AToken to this DebtToken
-  address internal _ghoAToken;
+  address internal immutable GHO_A_TOKEN;
 
   // Token that grants discounts off the debt interest
   IERC20 internal _discountToken;
@@ -72,17 +72,20 @@ contract GhoVariableDebtToken is GhoDebtTokenBase, IGhoVariableDebtToken {
    * @dev Only AToken can call functions marked by this modifier.
    **/
   modifier onlyAToken() {
-    require(_ghoAToken == msg.sender, 'CALLER_NOT_A_TOKEN');
+    require(GHO_A_TOKEN == msg.sender, 'CALLER_NOT_A_TOKEN');
     _;
   }
 
   constructor(
     address pool,
+    address ghoAToken,
     address underlyingAsset,
     string memory name,
     string memory symbol,
     address incentivesController
-  ) GhoDebtTokenBase(pool, underlyingAsset, name, symbol, incentivesController) {}
+  ) GhoDebtTokenBase(pool, underlyingAsset, name, symbol, incentivesController) {
+    GHO_A_TOKEN = ghoAToken;
+  }
 
   /**
    * @dev Gets the revision of the stable debt token implementation
@@ -266,15 +269,8 @@ contract GhoVariableDebtToken is GhoDebtTokenBase, IGhoVariableDebtToken {
   }
 
   /// @inheritdoc IGhoVariableDebtToken
-  function setAToken(address ghoAToken) external override onlyLendingPoolAdmin {
-    require(_ghoAToken == address(0), 'ATOKEN_ALREADY_SET');
-    _ghoAToken = ghoAToken;
-    emit ATokenSet(ghoAToken);
-  }
-
-  /// @inheritdoc IGhoVariableDebtToken
   function getAToken() external view override returns (address) {
-    return _ghoAToken;
+    return GHO_A_TOKEN;
   }
 
   /// @inheritdoc IGhoVariableDebtToken

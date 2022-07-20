@@ -38,22 +38,6 @@ task(
     `GhoAToken treasury set to: ${aaveMarketAddresses.treasury} in tx: ${setTreasuryTxReceipt.transactionHash}`
   );
 
-  // set variable debt token
-  const setVariableDebtTx = await ghoAToken.setVariableDebtToken(
-    tokenProxyAddresses.variableDebtTokenAddress
-  );
-  const setVariableDebtTxReceipt = await setVariableDebtTx.wait();
-  console.log(
-    `GhoAToken variableDebtContract set to: ${tokenProxyAddresses.variableDebtTokenAddress} in tx: ${setVariableDebtTxReceipt.transactionHash}`
-  );
-
-  // set variable debt token
-  const setATokenTx = await ghoVariableDebtToken.setAToken(tokenProxyAddresses.aTokenAddress);
-  const setATokenTxReceipt = await setATokenTx.wait();
-  console.log(
-    `VariableDebtToken aToken set to: ${tokenProxyAddresses.aTokenAddress} in tx: ${setATokenTxReceipt.transactionHash}`
-  );
-
   // set discount strategy
   const discountRateStrategy = await getGhoDiscountRateStrategy();
   const updateDiscountRateStrategyTx = await ghoVariableDebtToken.updateDiscountRateStrategy(

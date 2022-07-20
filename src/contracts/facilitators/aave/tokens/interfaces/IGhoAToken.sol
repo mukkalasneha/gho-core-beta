@@ -19,13 +19,6 @@ interface IGhoAToken is IAToken {
   event TreasuryUpdated(address indexed previousTreasury, address indexed newTreasury);
 
   /**
-   * @dev Sets a reference to the GhoVariableDebtToken contract
-   * @dev Only callable by the pool admin
-   * @param ghoVariableDebtAddress GhoVariableDebtToken contract address
-   **/
-  function setVariableDebtToken(address ghoVariableDebtAddress) external;
-
-  /**
    * @dev Return the address of the GhoVariableDebtToken contract
    **/
   function getVariableDebtToken() external view returns (address);

@@ -69,13 +69,6 @@ interface IGhoVariableDebtToken is IVariableDebtToken {
   );
 
   /**
-   * @dev Sets a reference to the GhoAToken contract
-   * @dev Only callable by the pool admin
-   * @param aToken GhoAToken contract
-   **/
-  function setAToken(address aToken) external;
-
-  /**
    * @dev Returns the address of the GhoAToken contract
    **/
   function getAToken() external view returns (address);
