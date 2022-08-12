@@ -7,8 +7,8 @@ import {IERC20} from '../dependencies/aave-core/dependencies/openzeppelin/contra
 import {IAaveIncentivesController} from '../dependencies/aave-tokens/interfaces/IAaveIncentivesController.sol';
 import {SafeERC20} from '../dependencies/aave-core-v8/dependencies/openzeppelin/contracts/SafeERC20.sol';
 import {Errors} from '../dependencies/aave-core-v8/protocol/libraries/helpers/Errors.sol';
-import {ILendingPool} from '../dependencies/aave-core-v8/interfaces/ILendingPool.sol';
-import {ILendingPoolAddressesProvider} from '../dependencies/aave-core-v8/interfaces/ILendingPoolAddressesProvider.sol';
+import {ILendingPoolV8} from '../dependencies/aave-core-v8/interfaces/ILendingPoolV8.sol';
+import {ILendingPoolAddressesProviderV8} from '../dependencies/aave-core-v8/interfaces/ILendingPoolAddressesProviderV8.sol';
 import {IncentivizedERC20} from '../dependencies/aave-tokens-v8/IncentivizedERC20.sol';
 
 // Gho Imports
@@ -35,7 +35,7 @@ contract GhoAToken is VersionedInitializable, IncentivizedERC20, IGhoAToken {
   uint256 public constant ATOKEN_REVISION = 0x1;
   address public immutable UNDERLYING_ASSET_ADDRESS;
   address public immutable RESERVE_TREASURY_ADDRESS;
-  ILendingPool public immutable POOL;
+  ILendingPoolV8 public immutable POOL;
 
   /// @dev owner => next valid nonce to submit with permit()
   mapping(address => uint256) public _nonces;
@@ -55,13 +55,13 @@ contract GhoAToken is VersionedInitializable, IncentivizedERC20, IGhoAToken {
    * @dev Only pool admin can call functions marked by this modifier.
    **/
   modifier onlyLendingPoolAdmin() {
-    ILendingPoolAddressesProvider addressesProvider = POOL.getAddressesProvider();
+    ILendingPoolAddressesProviderV8 addressesProvider = POOL.getAddressesProvider();
     require(addressesProvider.getPoolAdmin() == msg.sender, Errors.CALLER_NOT_POOL_ADMIN);
     _;
   }
 
   constructor(
-    ILendingPool pool,
+    ILendingPoolV8 pool,
     address underlyingAssetAddress,
     address reserveTreasuryAddress,
     string memory tokenName,

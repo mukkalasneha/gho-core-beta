@@ -4,7 +4,7 @@ pragma solidity 0.8.10;
 import {VersionedInitializable} from '@aave/core-v3/contracts/protocol/libraries/aave-upgradeability/VersionedInitializable.sol';
 import {ICreditDelegationToken} from '../../dependencies/aave-tokens/interfaces/ICreditDelegationToken.sol';
 import {IDebtTokenBase} from '../../dependencies/aave-tokens/interfaces/IDebtTokenBase.sol';
-import {ILendingPool} from '../../dependencies/aave-core-v8/interfaces/ILendingPool.sol';
+import {ILendingPoolV8} from '../../dependencies/aave-core-v8/interfaces/ILendingPoolV8.sol';
 import {Errors} from '../../dependencies/aave-core-v8/protocol/libraries/helpers/Errors.sol';
 
 // Gho Imports
@@ -22,11 +22,9 @@ abstract contract GhoDebtTokenBase is
   IDebtTokenBase
 {
   address public immutable UNDERLYING_ASSET_ADDRESS;
-  ILendingPool public immutable POOL;
+  ILendingPoolV8 public immutable POOL;
 
   mapping(address => mapping(address => uint256)) internal _borrowAllowances;
-
-
 
   /**
    * @dev Only lending pool can call functions marked by this modifier
@@ -47,7 +45,7 @@ abstract contract GhoDebtTokenBase is
     string memory symbol,
     address incentivesController
   ) GhoIncentivizedERC20(name, symbol, 18, incentivesController) {
-    POOL = ILendingPool(pool);
+    POOL = ILendingPoolV8(pool);
     UNDERLYING_ASSET_ADDRESS = underlyingAssetAddress;
   }
 
@@ -76,7 +74,6 @@ abstract contract GhoDebtTokenBase is
       ''
     );
   }
-
 
   /**
    * @dev delegates borrowing power to a user on the specific debt token
