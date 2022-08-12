@@ -2,10 +2,10 @@
 pragma solidity >=0.6.0 <0.9.0;
 pragma experimental ABIEncoderV2;
 
-import {ILendingPoolAddressesProviderV8} from './ILendingPoolAddressesProviderV8.sol';
-import {DataTypesV8} from '../protocol/libraries/types/DataTypesV8.sol';
+import {ILendingPoolAddressesProvider} from './ILendingPoolAddressesProvider.sol';
+import {DataTypes} from '../protocol/libraries/types/DataTypes.sol';
 
-interface ILendingPoolV8 {
+interface ILendingPool {
   /**
    * @dev Emitted on deposit()
    * @param reserve The address of the underlying asset of the reserve
@@ -358,7 +358,7 @@ interface ILendingPoolV8 {
   function getConfiguration(address asset)
     external
     view
-    returns (DataTypesV8.ReserveConfigurationMap memory);
+    returns (DataTypes.ReserveConfigurationMap memory);
 
   /**
    * @dev Returns the configuration of the user across all the reserves
@@ -368,7 +368,7 @@ interface ILendingPoolV8 {
   function getUserConfiguration(address user)
     external
     view
-    returns (DataTypesV8.UserConfigurationMap memory);
+    returns (DataTypes.UserConfigurationMap memory);
 
   /**
    * @dev Returns the normalized income normalized income of the reserve
@@ -389,7 +389,7 @@ interface ILendingPoolV8 {
    * @param asset The address of the underlying asset of the reserve
    * @return The state of the reserve
    **/
-  function getReserveData(address asset) external view returns (DataTypesV8.ReserveData memory);
+  function getReserveData(address asset) external view returns (DataTypes.ReserveData memory);
 
   function finalizeTransfer(
     address asset,
@@ -402,7 +402,7 @@ interface ILendingPoolV8 {
 
   function getReservesList() external view returns (address[] memory);
 
-  function getAddressesProvider() external view returns (ILendingPoolAddressesProviderV8);
+  function getAddressesProvider() external view returns (ILendingPoolAddressesProvider);
 
   function setPause(bool val) external;
 

@@ -4,12 +4,12 @@ pragma solidity 0.8.10;
 import {IERC20} from '../dependencies/aave-core/dependencies/openzeppelin/contracts/IERC20.sol';
 import {FlashLoanReceiverBase} from '../dependencies/aave-core-v8/flashloan/base/FlashLoanReceiverBase.sol';
 import {SafeERC20} from '../dependencies/aave-core-v8/dependencies/openzeppelin/contracts/SafeERC20.sol';
-import {ILendingPoolAddressesProviderV8} from '../dependencies/aave-core-v8/interfaces/ILendingPoolAddressesProviderV8.sol';
+import {ILendingPoolAddressesProvider} from '../dependencies/aave-core-v8/interfaces/ILendingPoolAddressesProvider.sol';
 
 contract MockFlashLoanReceiver is FlashLoanReceiverBase {
   using SafeERC20 for IERC20;
 
-  ILendingPoolAddressesProviderV8 internal _provider;
+  ILendingPoolAddressesProvider internal _provider;
 
   event ExecutedWithFail(address[] _assets, uint256[] _amounts, uint256[] _premiums);
   event ExecutedWithSuccess(address[] _assets, uint256[] _amounts, uint256[] _premiums);
@@ -18,7 +18,7 @@ contract MockFlashLoanReceiver is FlashLoanReceiverBase {
   uint256 _amountToApprove;
   bool _simulateEOA;
 
-  constructor(ILendingPoolAddressesProviderV8 provider) public FlashLoanReceiverBase(provider) {}
+  constructor(ILendingPoolAddressesProvider provider) public FlashLoanReceiverBase(provider) {}
 
   function setFailExecutionTransfer(bool fail) public {
     _failExecution = fail;

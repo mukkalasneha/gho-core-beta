@@ -4,7 +4,7 @@ pragma solidity 0.8.10;
 import {VersionedInitializable} from '@aave/core-v3/contracts/protocol/libraries/aave-upgradeability/VersionedInitializable.sol';
 import {ICreditDelegationToken} from '../../dependencies/aave-tokens/interfaces/ICreditDelegationToken.sol';
 import {IDebtTokenBase} from '../../dependencies/aave-tokens/interfaces/IDebtTokenBase.sol';
-import {ILendingPoolV8} from '../../dependencies/aave-core-v8/interfaces/ILendingPoolV8.sol';
+import {ILendingPool} from '../../dependencies/aave-core-v8/interfaces/ILendingPool.sol';
 import {Errors} from '../../dependencies/aave-core-v8/protocol/libraries/helpers/Errors.sol';
 
 // Gho Imports
@@ -22,7 +22,7 @@ abstract contract GhoDebtTokenBase is
   IDebtTokenBase
 {
   address public immutable UNDERLYING_ASSET_ADDRESS;
-  ILendingPoolV8 public immutable POOL;
+  ILendingPool public immutable POOL;
 
   mapping(address => mapping(address => uint256)) internal _borrowAllowances;
 
@@ -45,7 +45,7 @@ abstract contract GhoDebtTokenBase is
     string memory symbol,
     address incentivesController
   ) GhoIncentivizedERC20(name, symbol, 18, incentivesController) {
-    POOL = ILendingPoolV8(pool);
+    POOL = ILendingPool(pool);
     UNDERLYING_ASSET_ADDRESS = underlyingAssetAddress;
   }
 
