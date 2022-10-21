@@ -31,6 +31,9 @@ task('gho-setup', 'Deploy and Configure Gho').setAction(async (_, hre) => {
   await hre.run('add-gho-as-entity');
 
   blankSpace();
+  await hre.run('add-flashmint-as-entity');
+
+  blankSpace();
   await hre.run('set-gho-addresses');
 
   /*****************************************
