@@ -81,6 +81,48 @@ contract GhoFlashMinter is IGhoFlashMinter {
     }
   }
 
+  function flashLoanToNotBorrower(
+    IERC3156FlashBorrower receiver,
+    uint256 amount,
+    bytes calldata data /*override*/
+  ) external returns (bool) {
+    uint256 fee = _flashFee(amount);
+    GHO_TOKEN.mint(address(receiver), amount);
+
+    require(
+      receiver.onFlashLoan(msg.sender, address(GHO_TOKEN), amount, fee, data) == CALLBACK_SUCCESS,
+      'FlashMinter: Callback failed'
+    );
+
+    GHO_TOKEN.transferFrom(address(receiver), address(this), amount + fee);
+    GHO_TOKEN.burn(amount);
+
+    emit FlashMint(address(receiver), msg.sender, address(GHO_TOKEN), amount, fee);
+
+    return true;
+  }
+
+  function flashLoanToBorrower(
+    IERC3156FlashBorrower receiver,
+    uint256 amount,
+    bytes calldata data /*override*/
+  ) external returns (bool) {
+    require(_aclManager.isFlashBorrower(msg.sender), 'Flashminter: Not FlashBorrower');
+    GHO_TOKEN.mint(address(receiver), amount);
+
+    require(
+      receiver.onFlashLoan(msg.sender, address(GHO_TOKEN), amount, 0, data) == CALLBACK_SUCCESS,
+      'FlashMinter: Callback failed'
+    );
+
+    GHO_TOKEN.transferFrom(address(receiver), address(this), amount);
+    GHO_TOKEN.burn(amount);
+
+    emit FlashMint(address(receiver), msg.sender, address(GHO_TOKEN), amount, 0);
+
+    return true;
+  }
+
   // @inheritdoc IERC3156FlashLender
   function flashLoan(
     IERC3156FlashBorrower receiver,
