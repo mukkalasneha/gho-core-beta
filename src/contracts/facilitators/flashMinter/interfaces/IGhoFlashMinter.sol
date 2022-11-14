@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import {IERC3156FlashLender} from '@openzeppelin/contracts/interfaces/IERC3156FlashLender.sol';
+import {IERC3156FlashBorrower} from '@openzeppelin/contracts/interfaces/IERC3156FlashBorrower.sol';
 
 /**
  * @title IGhoFlashMinter
@@ -33,16 +34,43 @@ interface IGhoFlashMinter is IERC3156FlashLender {
   );
 
   /**
-   * @notice Distribute accumulated fees to the GHO treasury
-   */
-  function distributeToTreasury() external;
-
-  /**
    * @dev Emitted when GHO treasury address is updated
    * @param oldGhoTreasury The address of the old GhoTreasury
    * @param newGhoTreasury The address of the new GhoTreasury
    **/
   event GhoTreasuryUpdated(address indexed oldGhoTreasury, address indexed newGhoTreasury);
+
+  /**
+   * @notice Distribute accumulated fees to the GHO treasury
+   */
+  function distributeToTreasury() external;
+
+  /**
+   * @notice An optimized flash loan function, callable by any address, but always imposing a fee.
+   *
+   * @param receiver The flash loan receiver address.
+   * @param amount The GHO token amount to flash loan to the receiver.
+   * @param data The custom data to send to the receiver on the callback.
+   */
+  function flashLoanToNotBorrower(
+    IERC3156FlashBorrower receiver,
+    uint256 amount,
+    bytes calldata data
+  ) external returns (bool);
+
+  /**
+   * @notice An optimized flash loan function that is only valid for ACL-configured FlashBorrowers, but
+   * doesn't impose a fee.
+   *
+   * @param receiver The flash loan receiver address.
+   * @param amount The GHO token amount to flash loan to the receiver.
+   * @param data The custom data to send to the receiver on the callback.
+   */
+  function flashLoanToBorrower(
+    IERC3156FlashBorrower receiver,
+    uint256 amount,
+    bytes calldata data
+  ) external returns (bool);
 
   /**
    * @notice Returns the address of the Aave Pool Addresses Provider contract
