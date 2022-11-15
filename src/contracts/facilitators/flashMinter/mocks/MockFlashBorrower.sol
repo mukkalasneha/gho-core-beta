@@ -4,6 +4,7 @@ pragma solidity ^0.8.0;
 import {IERC20} from '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 import {IERC3156FlashBorrower} from '@openzeppelin/contracts/interfaces/IERC3156FlashBorrower.sol';
 import {IERC3156FlashLender} from '@openzeppelin/contracts/interfaces/IERC3156FlashLender.sol';
+import {IGhoFlashMinter} from '../interfaces/IGhoFlashMinter.sol';
 
 contract MockFlashBorrower is IERC3156FlashBorrower {
   enum Action {
@@ -39,7 +40,7 @@ contract MockFlashBorrower is IERC3156FlashBorrower {
     return keccak256('ERC3156FlashBorrower.onFlashLoan');
   }
 
-  /// @dev Initiate a flash loan
+  /// @dev Initiate a flash loan.
   function flashBorrow(address token, uint256 amount) public {
     bytes memory data = abi.encode(Action.NORMAL);
 
@@ -53,7 +54,32 @@ contract MockFlashBorrower is IERC3156FlashBorrower {
     _lender.flashLoan(this, token, amount, data);
   }
 
+  /// @dev Initiate a flash loan using the custom function requiring ACL-configured flash borrowers.
+  function flashBorrowAsACLConfigured(address token, uint256 amount) public {
+    bytes memory data = abi.encode(Action.NORMAL);
+
+    if (allowRepayment) {
+      uint256 allowance = IERC20(token).allowance(address(this), address(_lender));
+      IERC20(token).approve(address(_lender), allowance + amount);
+    }
+
+    IGhoFlashMinter(address(_lender)).flashLoanToBorrower(this, amount, data);
+  }
+
   function setAllowRepayment(bool active) public {
     allowRepayment = active;
+  }
+
+  function flashBorrowNotACLConfigured(address token, uint256 amount) public {
+    bytes memory data = abi.encode(Action.NORMAL);
+
+    if (allowRepayment) {
+      uint256 allowance = IERC20(token).allowance(address(this), address(_lender));
+      uint256 fee = _lender.flashFee(token, amount);
+      uint256 repayment = amount + fee;
+      IERC20(token).approve(address(_lender), allowance + repayment);
+    }
+
+    IGhoFlashMinter(address(_lender)).flashLoanToNotBorrower(this, amount, data);
   }
 }
