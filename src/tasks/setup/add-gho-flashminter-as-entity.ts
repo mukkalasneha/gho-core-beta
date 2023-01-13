@@ -1,27 +1,31 @@
 import { task } from 'hardhat/config';
-import { DRE, getNetwork, impersonateAccountHardhat } from '../../helpers/misc-utils';
 import { aaveMarketAddresses } from '../../helpers/config';
 import { ghoEntityConfig } from '../../helpers/config';
 import { IGhoToken } from '../../../types';
 
+import { getGhoToken, getGhoFlashMinter } from '../../helpers/contract-getters';
+import { DRE } from '../../helpers/misc-utils';
+
 task('add-gho-flashminter-as-entity', 'Adds FlashMinter as a gho entity').setAction(
-  async (_, hre) => {
+  async (params, hre) => {
     await hre.run('set-DRE');
     const { ethers } = DRE;
     const [deployer] = await hre.ethers.getSigners();
 
-    let gho = await ethers.getContract('GhoToken');
-    gho = gho.connect(deployer);
-    let ghoFlashMinter = await ethers.getContract('GhoFlashMinter');
-    ghoFlashMinter = ghoFlashMinter.connect(deployer);
+    let gho;
+    let ghoFlashMinter;
 
-    const network = getNetwork();
-    if (DRE.network.name == 'hardhat') {
-      const governanceSigner = await impersonateAccountHardhat(
-        aaveMarketAddresses[network].shortExecutor
-      );
-      gho = await gho.connect(governanceSigner);
+    if (params.deploying) {
+      gho = await ethers.getContract('GhoToken');
+      ghoFlashMinter = await ethers.getContract('GhoFlashMinter');
+    } else {
+      const contracts = require('../../../contracts.json');
+
+      gho = await getGhoToken(contracts.GhoToken);
+      ghoFlashMinter = await getGhoFlashMinter(contracts.GhoFlashMinter);
     }
+
+    gho.connect(deployer);
 
     const aaveEntity: IGhoToken.FacilitatorStruct = {
       label: ghoEntityConfig.label,

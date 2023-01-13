@@ -13,6 +13,7 @@ export const aaveMarketAddresses = {
     ethUsdOracle: '0xD4a33860578De61DBAbDc8BFdb98FD742fA7028e',
     weth: '0x3D45e807DF39D0A1CC2b959BfEa473d0774B5a57',
     usdc: '0x80375a58741948c972cf04033880352e3E853c26',
+    aaveFaucetOwner: '0xcB3C5b24F980De834754F2485C9195eac1Ab0FDD',
   },
   mainnet: {
     pool: '0x7d2768dE32b0b80b7a3454c06BdAc94A69DDc7A9',

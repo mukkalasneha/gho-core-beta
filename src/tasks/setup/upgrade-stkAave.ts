@@ -50,11 +50,14 @@ task('upgrade-stkAave', 'Upgrade Staked Aave')
       'initialize',
       [ghoVariableDebtTokenAddress]
     );
+
+    console.log(1);
     const upgradeTx = await stkAaveProxy.upgradeToAndCall(
       newStakedAaveImpl.address,
       stakedAaveEncodedInitialize
     );
     await upgradeTx.wait();
+    console.log(2);
 
     console.log(`stkAave upgradeTx.hash: ${upgradeTx.hash}`);
     console.log(`StkAave implementation set to: ${newStakedAaveImpl.address}`);
