@@ -97,3 +97,20 @@ export const getProxyImplementationBySlot = async (proxyAddress: tEthereumAddres
     hre.ethers.utils.defaultAbiCoder.decode(['address'], proxyImplementationSlot).toString()
   );
 };
+
+export const getContractsFromFile = () => {
+  let contracts;
+
+  if (process.env.DEPLOYING == 'true') {
+    contracts = require('../../deployments/local/current_deployment.json');
+  } else {
+    const inputContractsFile = process.env.CONTRACTS;
+    if (inputContractsFile == '' || inputContractsFile == null) {
+      contracts = require(`../../deployments/contracts_${getNetwork()}.json`);
+    } else {
+      contracts = require(`../../deployments/${inputContractsFile}`);
+    }
+  }
+
+  return contracts;
+};
