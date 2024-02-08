@@ -1,5 +1,5 @@
 {
-  "name": "@aave/gho",
+  "name": "@aave/gho/test",
   "description": "GHO core smart contracts",
   "keywords": [
     "gho",
@@ -37,7 +37,8 @@
     "deploy-testnet:sepolia": "HARDHAT_NETWORK=sepolia npm run deploy-testnet",
     "deploy-testnet:sepolia:fork": "FORK=sepolia npm run deploy-testnet",
     "ci:clean": "rm -rf ./artifacts ./cache ./types ./temp-artifacts",
-    "ci:test": "npm run test"
+    "ci:test": "npm run test",
+    "postinstall": "patch-package"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^2.0.1",
@@ -63,6 +64,7 @@
     "husky": "^8.0.3",
     "jsondiffpatch": "^0.4.1",
     "lint-staged": "^13.1.0",
+    "patch-package": "^7.0.0",
     "prettier": "^2.8.3",
     "prettier-plugin-solidity": "^1.1.1",
     "ts-node": "^10.7.0",
@@ -72,7 +74,7 @@
   "dependencies": {
     "@aave/aave-token": "^1.0.4",
     "@aave/core-v3": "^1.17.2",
-    "@aave/deploy-v3": "^1.55.3",
+    "@aave/deploy-v3": "^1.53.0",
     "@aave/periphery-v3": "^2.0.1",
     "@aave/safety-module": "^1.0.3",
     "@openzeppelin/contracts": "^4.5.0"
